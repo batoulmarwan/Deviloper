@@ -16,7 +16,7 @@ class ProjectController extends BaseController
    public function store(StoreProjectRequest $request)
    {
        $project = $request->user()->projects()->create($request->validated());
-       return response()->json(new ProjectResource($project),201);
+       return $this->sendResponse( new ProjectResource($project), 'Project created successfully',201 );
    }
 
   
@@ -29,7 +29,8 @@ class ProjectController extends BaseController
    public function storeCv(StoreCVRequest $request)
    {
     $project = $request->user()->cvs()->create($request->validated());
-    return response()->json(new CVResource($project),201);
+    return $this->sendResponse(
+        new CvResource($project),'CV created successfully', 201);
    }
 
 

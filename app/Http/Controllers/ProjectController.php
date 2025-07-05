@@ -9,34 +9,49 @@ use App\Http\Requests\StoreCVRequest;
 use App\Http\Requests\VieweCVRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\CVResource;
+use App\Models\Project;
+use App\Models\Cv;
+use App\Traits\Uploadfile;
+
 
 class ProjectController extends BaseController
 {
-  
-   public function store(StoreProjectRequest $request)
-   {
-       $project = $request->user()->projects()->create($request->validated());
-       return $this->sendResponse( new ProjectResource($project), 'Project created successfully',201 );
-   }
+    use Uploadfile;
 
-  
-   public function index(ViewProjectsRequest $request)
-   {
-    $projects = $request->user()->projects()->get();
-    return ProjectResource::collection($projects);
-   }
-  
-   public function storeCv(StoreCVRequest $request)
-   {
-    $project = $request->user()->cvs()->create($request->validated());
-    return $this->sendResponse(
-        new CvResource($project),'CV created successfully', 201);
-   }
+      public function store(StoreProjectRequest $request)
+        {
+             $data = $request->validated();
+             if ($request->hasFile('image_path'))
+             {
+              $path = $this->storeFile($request->file('image_path'),'projects', null,'public_uploads');
+              $data['image_path'] = asset('uploads/' . $path);
+             }
+             $project = $request->user()->projects()->create($data);
+             return $this->sendResponse(new ProjectResource($project), 'Project created successfully', 201);
+        }
+      
+      public function index()
+        {
+          $projects = Project::all();
+          return $this->sendResponse(ProjectResource::collection($projects), "Successfully retrieved all Project.");
+        }
+
+      public function storeCv(StoreCVRequest $request)
+        {
+          $data = $request->validated();
+          if ($request->hasFile('image_path'))
+         {
+         $path = $this->storeFile($request->file('image_path'),'projects', null,'public_uploads');
+         $data['image_path'] = asset('uploads/' . $path);
+         }
+         $project = $request->user()->cvs()->create($data);
+          return $this->sendResponse(new CvResource($project), 'CV created successfully', 201);
+        }
 
 
-   public function indexCv(VieweCVRequest $request)
-   {
-    $projects = $request->user()->cvs()->get();
-    return CVResource::collection($projects);
-   }
+       public function indexCv(VieweCVRequest $request)
+       {
+         $CV = Cv::all();
+         return $this->sendResponse(CVResource::collection($CV), "Successfully retrieved all CV.");
+       }
 }

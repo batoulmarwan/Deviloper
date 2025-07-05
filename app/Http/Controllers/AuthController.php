@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\AdminLoginRequest;
+use App\Http\Requests\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -10,13 +11,16 @@ use App\Models\Admin;
 use App\Http\Resources\RegisterResource;
 use App\Http\Resources\LoginResource;
 use App\Http\Requests\UserLoginRequest;
+use App\Http\Resources\ProfileingResourse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ResetCodePassword;
 use App\Mail\SendCodeResetPassword;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use App\Traits\Uploadfile;
 class AuthController extends BaseController
-{
+{ 
+    use Uploadfile;
     public function user_register(UserRegisterRequest $request)
     {
         $input = $request->all();
@@ -56,7 +60,7 @@ class AuthController extends BaseController
      return $this->sendError('User not authenticated', [], 401);
     }
     public function delete_account(Request $request)
-{
+    {
     $user = $request->user();
     if (!$user) {
         return $this->sendError('User not authenticated', [], 401);
@@ -66,7 +70,7 @@ class AuthController extends BaseController
     }
     $user->delete();
     return $this->sendResponse(null, 'Account deleted successfully');
-}
+    }
 
     
     public function admin_login(AdminLoginRequest $request)
@@ -141,4 +145,25 @@ class AuthController extends BaseController
 
         return response(['message' => 'Password has been successfully reset'], 200);
     }
+
+    public function show(Request $request)
+{   
+         $data=$request->user()->profile;
+         return $this->sendResponse(new ProfileingResourse($data), "Successfully retrieved all CV.");
+}
+
+public function update(Profile $request)
+{
+    $data = $request->validated();
+    if ($request->hasFile('avatar'))
+    {
+     $path = $this->storeFile($request->file('avatar'),'projects', null,'public_uploads');
+     $data['avatar'] = asset('uploads/' . $path);
+    }
+    $profile = $request->user()->profile()->updateOrCreate([], $data);
+
+    return $this->sendResponse(new ProfileingResourse($profile), 'profile created successfully', 200);
+    
+}
+
 }

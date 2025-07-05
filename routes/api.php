@@ -27,6 +27,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/projects', [ProjectController::class, 'store']);
     Route::get('/cvs', [ProjectController::class, 'indexCv']);
     Route::post('/cvs', [ProjectController::class, 'storeCv']);
+    Route::post('/profileView', [AuthController::class, 'show']);
+    Route::post('/profile', [AuthController::class, 'update']);
 });
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/admin_logout', [AuthController::class, 'admin_logout']);

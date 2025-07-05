@@ -18,6 +18,7 @@ class CVResource extends JsonResource
             'id'=> $this->id,
             'title'=> $this->title,
             'content'=> $this->content,
+            'image_path' => $this->image_path ? asset( $this->image_path) : null,
         ];
     }
 }

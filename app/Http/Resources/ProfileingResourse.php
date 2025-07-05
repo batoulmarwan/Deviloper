@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProjectResource extends JsonResource
+class ProfileingResourse extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,9 @@ class ProjectResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'title'       => $this->title,
-            'description' => $this->description,
-            'image_path' => $this->image_path ? asset( $this->image_path) : null,
+            'full_name'       => $this->full_name,
+            'phone' => $this->phone,
+            'avatar' => $this->avatar ? asset( $this->avatar) : null,
         ];
     }
 }

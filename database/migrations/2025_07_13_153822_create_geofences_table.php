@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('geofences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->text('face_image_url')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->enum('role', ['Admin', 'HR', 'Employee']);
-            $table->enum('language_preference', ['en', 'ar'])->default('en');
-            $table->rememberToken();
+            $table->double('latitude');
+            $table->double('longitude');
+            $table->integer('radius_in_meters');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('geofences');
     }
 };

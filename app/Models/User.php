@@ -18,10 +18,12 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    protected $fillable =  ['company_id',
+     'name',
+     'email', 
+     'password', 
+     'role', 
+     'language_preference'
     ];
 
     /**
@@ -43,7 +45,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    public function projects()
+    /*public function projects()
     {
     return $this->hasMany(Project::class);
     }
@@ -54,6 +56,34 @@ class User extends Authenticatable
     public function profile()
     {
     return $this->hasOne(Profiles::class);
+    }*/
+    public function company() {
+        return $this->belongsTo(Company::class);
     }
 
+    public function attendanceRecords() {
+        return $this->hasMany(AttendanceRecord::class);
+    }
+
+    public function leaveRequests() {
+        return $this->hasMany(LeaveRequest::class);
+    }
+
+    public function wfhRequests() {
+        return $this->hasMany(WfhRequest::class);
+    }
+
+    public function tasks() {
+        return $this->hasMany(Task::class);
+    }
+
+    public function notifications() {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function shifts() {
+        return $this->belongsToMany(Shift::class, 'user_shifts')->withTimestamps();
+    }
 }
+
+

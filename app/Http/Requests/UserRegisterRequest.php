@@ -29,7 +29,11 @@ class UserRegisterRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
                     ->symbols()],
+            'company_id' => 'required|exists:companies,id',
+            'role' => 'required|string',
+            'language_preference' => 'in:en,ar'
         ];
+        
     }
     public function messages()
     {

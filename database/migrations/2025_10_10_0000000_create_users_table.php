@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('X_loc');
+            $table->string('Y_loc');
             $table->text('face_image_url')->nullable();
             $table->boolean('is_active')->default(true);
             $table->enum('role', ['Admin', 'HR', 'Employee']);

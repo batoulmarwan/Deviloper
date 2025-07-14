@@ -22,6 +22,8 @@ class User extends Authenticatable
      'name',
      'email', 
      'password',
+     'X_loc',
+     'Y_loc',
      'face_image_url',
      'is_active', 
      'role', 
@@ -85,6 +87,9 @@ class User extends Authenticatable
 
     public function shifts() {
         return $this->belongsToMany(Shift::class, 'user_shifts')->withTimestamps();
+    }
+    public function location() {
+        return $this->belongsTo(Location::class);
     }
 }
 

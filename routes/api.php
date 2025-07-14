@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AttendanceController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,6 +19,7 @@ Route::post('/user_register',[AuthController::class,'user_register']);
 Route::post('/user_login',[AuthController::class,'user_login']);
 Route::post('/admin_login',[AuthController::class,'admin_login']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    
     return $request->user();
 });
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
@@ -29,6 +31,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/cvs', [ProjectController::class, 'storeCv']);
     Route::post('/profileView', [AuthController::class, 'show']);
     Route::post('/profile', [AuthController::class, 'update']);
+    Route::post('/attendance', [AttendanceController::class, 'Attendence']);
+    Route::get('/attendance/history', [AttendanceController::class, 'history']);
 });
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/admin_logout', [AuthController::class, 'admin_logout']);

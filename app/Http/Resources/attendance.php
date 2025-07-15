@@ -15,14 +15,14 @@ class attendance extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'check_type'=> $this->check_type,
-            'check_time'=> $this->check_time,
-            'gps_lat'=> $this->gps_lat,
-            'gps_lng'=> $this->gps_lng,
-            'photo_url'=> $this->photo_url,
-            'is_fake_gps'=> $this->is_fake_gps,
-            'synced'=> $this->synced,
-            
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'check_time' => $this->check_time,
+            'check_type' => $this->check_type,
+            'gps_lat' => $this->gps_lat,
+            'gps_lng' => $this->gps_lng,
+            'photo_url' => $this->photo_url,
+            'created_at' => $this->created_at->toDateTimeString(),
         ];
     }
 }

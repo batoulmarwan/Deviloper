@@ -22,10 +22,10 @@ class StoreAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'gps_lat' => 'required|numeric',
+            'gps_lng' => 'required|numeric',
             'check_type' => 'required|in:IN,OUT',
-            'gps_lat' => 'nullable|numeric',
-            'gps_lng' => 'nullable|numeric',
-            'photo_url' => 'nullable|string',
+            'photo_url' => 'nullable|image|max:2048',
         ];
     }
 }

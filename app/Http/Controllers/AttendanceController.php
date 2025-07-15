@@ -8,57 +8,50 @@ use App\Models\AttendanceRecord;
 use App\Models\Geofence;
 use App\Http\Resources\attendance;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\Uploadfile;
 
 class AttendanceController extends BaseController
 {
-    public function Attendence(Request $request)
+    use Uploadfile;
+    public function Attendence(StoreAttendanceRequest $request)
     {
-        $user = Auth::user();
-
-        $geofence = Geofence::where('company_id', $user->company_id)->first();
-    
-        if (!$geofence) {
-            return response()->json(['message' => 'لا يوجد نطاق جغرافي محدد للشركة'], 404);
+      $user = $request->user();
+      $data = $request->validated();
+      $geofence = Geofence::where('company_id', $user->company_id)->first();
+      if (!$geofence)
+       {
+         return $this->sendError('No geofence defined for the company.', [], 404);
         }
-    
-        $distance = $this->haversineDistance(
-            $request->gps_lat,
-            $request->gps_lng,
-            $geofence->latitude,
-            $geofence->longitude
-        );
-    
-
-        if ($distance > $geofence->radius_in_meters) {
-            return response()->json([
-                'message' => 'لا يمكنك تسجيل الحضور، أنت خارج النطاق الجغرافي للشركة.',
-                'distance_in_meters' => $distance
-            ], 403);
-        }
-        $recentRecord = AttendanceRecord::where('user_id', $user->id)
-        ->where('check_type', $request->check_type)
+       $distance = $this->haversineDistance(
+        $data['gps_lat'],
+        $data['gps_lng'],
+        $geofence->latitude,
+        $geofence->longitude
+       );
+     if ($distance > $geofence->radius_in_meters)
+     {
+        return $this->sendError('You are outside the company geofence. Attendance denied.', [
+            'distance_in_meters' => $distance
+        ], 403);
+     }
+     $recentRecord = AttendanceRecord::where('user_id', $user->id)
+        ->where('check_type', $data['check_type'])
         ->where('check_time', '>=', now()->subMinute())
         ->first();
 
-        if ($recentRecord) {
-           return response()->json([
-            'message' => 'لقد قمت بتسجيل حضورك لهذا النوع خلال الدقيقة الماضية، حاول لاحقًا.'
-           ], 409);
-        }
-        $record = AttendanceRecord::create([
-            'user_id'    => $user->id,
-            'check_time' => now(),
-            'gps_lat'    => $request->gps_lat,
-            'gps_lng'    => $request->gps_lng,
-            'photo_url'  => $request->photo_url ?? null,
-            'check_type' => $request->check_type,
-        ]);
-    
-        return response()->json([
-            'message' => 'تم تسجيل الحضور بنجاح',
-            'distance_in_meters' => $distance,
-            'record' => $record
-        ]);
+     if ($recentRecord)
+     {
+        return $this->sendError('You have already submitted attendance of this type within the last minute.', [], 409);
+     }
+      if ($request->hasFile('photo_url'))
+      {
+        $path = $this->storeFile($request->file('photo_url'), 'attendances', null, 'public_uploads');
+        $data['photo_url'] = asset('uploads/' . $path);
+      }
+      $data['user_id'] = $user->id;
+      $data['check_time'] = now();
+      $attendance = AttendanceRecord::create($data);
+      return $this->sendResponse(new attendance($attendance), 'Attendance recorded successfully');
     }
      private function haversineDistance($lat1, $lon1, $lat2, $lon2)
             {

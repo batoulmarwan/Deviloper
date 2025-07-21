@@ -6,13 +6,22 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Models\AttendanceRecord;
 use App\Models\Geofence;
+use App\Models\Company;
 use App\Http\Resources\attendance;
+use App\Http\Requests\createCompanyRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\Uploadfile;
 
 class AttendanceController extends BaseController
 {
     use Uploadfile;
+    public function createCompany(createCompanyRequest $request)
+    {
+        $data = $request->validated();
+        $data['subscription_plan'] = $data['subscription_plan'] ?? 'Free';
+        $company = Company::create($data);
+        return $this->sendResponse($company, 'Company created successfully.');
+    }
     public function Attendence(StoreAttendanceRequest $request)
     {
       $user = $request->user();
@@ -80,5 +89,5 @@ class AttendanceController extends BaseController
         ->get();
        return response()->json($records);
     }
-
+    
 }

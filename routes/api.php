@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\RequestController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,9 +34,13 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [AuthController::class, 'update']);
     Route::post('/attendance', [AttendanceController::class, 'Attendence']);
     Route::get('/attendance/history', [AttendanceController::class, 'history']);
+    Route::get('/my-requests', [RequestController::class, 'myRequests']);
 });
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/admin_logout', [AuthController::class, 'admin_logout']);
+    Route::post('/company', [AttendanceController::class, 'createCompany']);
+    Route::post('/leave-requests', [RequestController::class, 'storeLeaveRequest']);
+    Route::post('/wfh-requests', [RequestController::class, 'storeWfhRequest']);
 });
 Route::prefix('user')->group(function () {
     Route::post('password/email', [AuthController::class, 'ForgetPassword']);

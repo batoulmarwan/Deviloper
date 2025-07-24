@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->enum('subscription_plan', ['Free', 'Pro', 'Enterprise']);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             
         });

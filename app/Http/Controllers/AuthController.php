@@ -27,7 +27,7 @@ class AuthController extends BaseController
         $input['password'] = bcrypt($input['password']);
         $input['activation_token'] = str::random(60);
         $user = user::query()->create($input);
-        $user->assignRole('developer');
+        $user->assignRole($input['role']);
         $accessToken = $user->createToken('MyApp', ['user'])->plainTextToken;
         $data['token'] = $accessToken;
         $data['user'] = new RegisterResource($user);

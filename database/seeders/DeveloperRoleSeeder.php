@@ -5,13 +5,12 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Models\User; 
 
 class DeveloperRoleSeeder extends Seeder
 {
     public function run(): void
     {
-       
+      
         $permissions = [
             'create-project',
             'view-projects',
@@ -27,11 +26,23 @@ class DeveloperRoleSeeder extends Seeder
         }
 
        
-        $role = Role::firstOrCreate([
-            'name' => 'developer',
+        $roleEngineer = Role::firstOrCreate([
+            'name' => 'Employee
+            ',
+            'guard_name' => 'user-api'
+        ]);
+        $roleEngineer->syncPermissions($permissions);
+
+      
+        Role::firstOrCreate([
+            'name' => 'Admin',
             'guard_name' => 'user-api'
         ]);
 
-        $role->syncPermissions($permissions);
+       
+        Role::firstOrCreate([
+            'name' => 'HR',
+            'guard_name' => 'user-api'
+        ]);
     }
 }

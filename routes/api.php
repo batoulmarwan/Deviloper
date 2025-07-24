@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\TastController;
+use App\Http\Controllers\companyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,6 +43,15 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/company', [AttendanceController::class, 'createCompany']);
     Route::post('/leave-requests', [RequestController::class, 'storeLeaveRequest']);
     Route::post('/wfh-requests', [RequestController::class, 'storeWfhRequest']);
+    Route::post('/tasks', [TastController::class, 'storeTask']);
+    Route::get('/tasks/{id}', [TastController::class, 'show']);
+    Route::get('/tasks', [TastController::class, 'index']);
+    Route::post('/update/{id}', [TastController::class, 'update']);
+    Route::delete('/tasks/{id}', [TastController::class, 'destroy']);
+    Route::patch('/tasks/{id}/complete', [TastController::class, 'markComplete']);
+    Route::post('/storeCompany', [companyController::class, 'storeCompany']);
+    Route::post('/companies/{id}', [CompanyController::class, 'updateCompany']);
+    Route::post('/companies/{id}/block', [CompanyController::class, 'blockCompany']);
 });
 Route::prefix('user')->group(function () {
     Route::post('password/email', [AuthController::class, 'ForgetPassword']);
